@@ -1,31 +1,35 @@
 package BusR;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
-import java.sql.*;
 
-class Canceled extends ConnectionDb {
+class Canceled {
 
     public static void cancel() {
-        Scanner sc = new Scanner(System.in); // Do NOT close if program needs more input later
+        Scanner sc = new Scanner(System.in);
 
         System.out.print("Enter Booking ID to cancel: ");
         int bookingIdToCancel = sc.nextInt();
 
-        Connection con = null;
+        try (Connection con = ConnectionDb.getConnection()) { // ✅ Use shared connection method
+            if (con == null) {
+                System.out.println("Database connection failed.");
+                return;
+            }
 
-        try {
-            Class.forName(JDBC_DRIVER);
-            con = DriverManager.getConnection(DB_URL, user, password);
             con.setAutoCommit(false); // Start transaction
 
             // 1️⃣ Check if booking exists
             String checkBookingSql = "SELECT * FROM BOOKING WHERE BOOKING_ID = ?";
             try (PreparedStatement checkBookingStatement = con.prepareStatement(checkBookingSql)) {
                 checkBookingStatement.setInt(1, bookingIdToCancel);
-                try (ResultSet rs = checkBookingStatement.executeQuery()) {
 
+                try (ResultSet rs = checkBookingStatement.executeQuery()) {
                     if (!rs.next()) {
-                        System.out.println("Booking with ID " + bookingIdToCancel + " not found.");
+                        System.out.println("❌ Booking with ID " + bookingIdToCancel + " not found.");
                         return; // Exit without committing
                     }
 
@@ -47,30 +51,18 @@ class Canceled extends ConnectionDb {
                         deleteBookingStatement.executeUpdate();
                     }
 
-                    con.commit(); // ✅ Commit after both updates
-                    System.out.println("Booking successfully canceled!");
+                    con.commit();
+                    System.out.println("✅ Booking successfully canceled!");
                 }
+            } catch (SQLException e) {
+                con.rollback(); // Rollback if something goes wrong
+                System.out.println("⚠ Transaction rolled back due to error.");
+                throw e;
             }
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            if (con != null) {
-                try {
-                    con.rollback(); // Rollback if failure
-                    System.out.println("Transaction rolled back due to error.");
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        } finally {
-            if (con != null) {
-                try {
-                    con.setAutoCommit(true);
-                    con.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
+        sc.close();
     }
 }
