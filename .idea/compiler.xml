@@ -6,13 +6,21 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+<<<<<<< HEAD
         <module name="springCrud" />
+=======
+        <module name="springHello" />
+>>>>>>> 706560fb7fca4b16df583754da59c7c457354909
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+<<<<<<< HEAD
       <module name="springCrud" options="-parameters" />
+=======
+      <module name="springHello" options="-parameters" />
+>>>>>>> 706560fb7fca4b16df583754da59c7c457354909
     </option>
   </component>
 </project>

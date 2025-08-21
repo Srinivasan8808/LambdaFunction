@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/springCrud.iml" filepath="$PROJECT_DIR$/.idea/springCrud.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/springHello.iml" filepath="$PROJECT_DIR$/.idea/springHello.iml" />
+>>>>>>> 706560fb7fca4b16df583754da59c7c457354909
     </modules>
   </component>
 </project>
